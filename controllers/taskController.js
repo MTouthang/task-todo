@@ -13,75 +13,86 @@ exports.getTasks = (req, res) => {
  * create a task
  */
 exports.createTask = async (req, res) => {
-  const task = await Task.create(req.body);
-
-  res.status(200).json({
-    success: true,
-    task,
-  });
+  try {
+    const task = await Task.create(req.body);
+    res.status(200).json({
+      success: true,
+      task,
+    });
+  } catch (error) {
+    console.log(`Error: ${error}`);
+  }
 };
 
 /**
  * get a list of Tasks
  */
 exports.getAllTasks = async (req, res) => {
-  const tasks = await Task.find();
+  try {
+    const tasks = await Task.find();
 
-  if (!tasks) {
-    return new Error();
-  }
-  res.status(200).json({
-    success: true,
-    tasks,
-  });
+    if (!tasks) {
+      return new Error();
+    }
+    res.status(200).json({
+      success: true,
+      tasks,
+    });
+  } catch (error) {}
 };
 
 /**
  * delete task -
  */
 exports.deleteTask = async (req, res) => {
-  const task = await Task.findById(req.params.id);
+  try {
+    const task = await Task.findById(req.params.id);
 
-  if (!task) {
-    return new Error();
+    if (!task) {
+      return new Error();
+    }
+    await task.remove();
+
+    res.status(200).json({
+      success: true,
+      message: "Task deleted successfully",
+    });
+  } catch (error) {
+    console.log(`Error: ${error}`);
   }
-  await task.remove();
-
-  res.status(200).json({
-    success: true,
-    message: "Task deleted successfully",
-  });
 };
 
 /**
  * update task
  */
 exports.updateTask = async (req, res) => {
-  // const { taskName } = req.body;
-  // console.log(taskName);
+  try {
+    const task = await Task.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
 
-  console.log(req.params.id);
-  const task = await Task.findByIdAndUpdate(
-    req.params.id,
-    { $set: req.body },
-    {
-      new: true,
-      runValidators: true,
-    }
-  );
-
-  res.status(200).json({
-    success: true,
-    message: `updated`,
-  });
+    res.status(200).json({
+      success: true,
+      message: `updated`,
+    });
+  } catch (error) {}
 };
 
 exports.getTaskById = async (req, res) => {
-  const task = await Task.findById(req.params.id);
-  res.status(200).json({
-    success: true,
-    task,
-  });
+  try {
+    const task = await Task.findById(req.params.id);
+    res.status(200).json({
+      success: true,
+      task,
+    });
+  } catch (error) {
+    console.log(`Error: ${error}`);
+  }
 };
 
 // /**
@@ -96,18 +107,22 @@ exports.getTaskById = async (req, res) => {
  * delete todo
  */
 exports.removeTodo = async (req, res) => {
-  const task = await Task.findById(req.params.id);
+  try {
+    const task = await Task.findById(req.params.id);
 
-  // task.todos.filter((word) => String(word._id) !== req.params.todoId);
+    // task.todos.filter((word) => String(word._id) !== req.params.todoId);
 
-  for (let index = 0; index < task.todos.length; index++) {
-    if (task.todos[index]._id == req.params.todoId) {
-      await task.todos[index].remove();
+    for (let index = 0; index < task.todos.length; index++) {
+      if (task.todos[index]._id == req.params.todoId) {
+        await task.todos[index].remove();
+      }
     }
+    task.save();
+    res.status(200).json({
+      success: true,
+      task,
+    });
+  } catch (error) {
+    console.log(`Error: ${error}`);
   }
-  task.save();
-  res.status(200).json({
-    success: true,
-    task,
-  });
 };
