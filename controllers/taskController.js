@@ -3,7 +3,7 @@ const Task = require("../models/task");
 
 /**
  * home route
- * @return {String} welcome notes
+ *
  */
 exports.getTasks = (req, res) => {
   res.send("Task Todo Home route");
@@ -80,7 +80,9 @@ exports.updateTask = async (req, res) => {
       success: true,
       message: `updated`,
     });
-  } catch (error) {}
+  } catch (error) {
+    console.log(`Error: ${error}`);
+  }
 };
 
 exports.getTaskById = async (req, res) => {
@@ -95,22 +97,12 @@ exports.getTaskById = async (req, res) => {
   }
 };
 
-// /**
-//  * addTodo
-//  */
-// exports.addTodo = async (req, res) => {
-//   const task  = await Task.findById(req.params.id)
-
-// }
-
 /**
  * delete todo
  */
 exports.removeTodo = async (req, res) => {
   try {
     const task = await Task.findById(req.params.id);
-
-    // task.todos.filter((word) => String(word._id) !== req.params.todoId);
 
     for (let index = 0; index < task.todos.length; index++) {
       if (task.todos[index]._id == req.params.todoId) {
@@ -121,6 +113,28 @@ exports.removeTodo = async (req, res) => {
     res.status(200).json({
       success: true,
       task,
+    });
+  } catch (error) {
+    console.log(`Error: ${error}`);
+  }
+};
+
+/**
+ * search task --
+ */
+exports.searchTask = async (req, res) => {
+  try {
+    const { search } = req.query;
+    console.log(req.query);
+    console.log(search);
+
+    const taskResult = await Task.find({
+      taskName: { $regex: search, $options: "i" },
+    });
+
+    res.status(200).json({
+      success: true,
+      taskResult,
     });
   } catch (error) {
     console.log(`Error: ${error}`);

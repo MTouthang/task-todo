@@ -1,23 +1,24 @@
 const mongoose = require("mongoose");
 
-const taskSchema = new mongoose.Schema({
-  taskName: {
-    type: String,
-    required: true,
-    maxlength: [20, "Task should be under 20 characters"],
-  },
-  todos: [
-    {
-      todo: {
-        type: String,
-        maxlength: [25, "todo should be under 25 characters"],
-      },
+const taskSchema = new mongoose.Schema(
+  {
+    taskName: {
+      type: String,
+      required: true,
+      maxlength: [40, "Task should be under 20 characters"],
     },
-  ],
-  createAt: {
-    type: Date,
-    default: Date.now(),
+    todos: [
+      {
+        todo: {
+          type: String,
+          maxlength: [45, "todo should be under 25 characters"],
+        },
+      },
+    ],
   },
-});
+  {
+    timestamps: true,
+  }
+);
 
 module.exports = mongoose.model("task", taskSchema);
