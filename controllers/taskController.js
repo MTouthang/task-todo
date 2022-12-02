@@ -65,6 +65,7 @@ exports.deleteTask = async (req, res) => {
 /**
  * update task
  */
+// TODO: check if data wrt to id exist in the database
 exports.updateTask = async (req, res) => {
   try {
     const task = await Task.findByIdAndUpdate(
@@ -138,5 +139,21 @@ exports.searchTask = async (req, res) => {
     });
   } catch (error) {
     console.log(`Error: ${error}`);
+  }
+};
+
+/**
+ * sort task with respect to updated time
+ */
+exports.sortTask = async (req, res) => {
+  try {
+    const tasks = await Task.find().sort({ updatedAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      tasks,
+    });
+  } catch (error) {
+    console.log(`Error ${error}`);
   }
 };

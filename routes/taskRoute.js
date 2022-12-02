@@ -10,6 +10,7 @@ const {
   removeTodo,
   getTaskById,
   searchTask,
+  sortTask,
 } = require("../controllers/taskController");
 
 router.route("/").get(getTasks);
@@ -23,5 +24,7 @@ router.route("/task/todo/:id/:todoId").delete(removeTodo);
 
 // search route
 router.route("/tasks/search").get(searchTask);
+// sort task (descending to updated time)
+router.route("/tasks/sort").get(sortTask);
 
 module.exports = router;
