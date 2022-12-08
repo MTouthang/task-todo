@@ -15,6 +15,11 @@ const taskSchema = new mongoose.Schema(
         },
       },
     ],
+    userId: {
+      type: String,
+      trim: true,
+      required: [true, "UseId must be provided"],
+    },
   },
   {
     timestamps: true,
