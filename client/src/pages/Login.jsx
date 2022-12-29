@@ -1,9 +1,22 @@
-import React, { useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
+
+/** appwrite for user account*/
 import account from '../config/appwrite'
+
+/** react-router-dom for routing */
 import { useNavigate } from 'react-router-dom'
+
+/** context api for userDetails */
+import userContext from '../contextAPI/userContext'
+
+
 
 const Login = () => {
   const navigate = useNavigate()
+
+  
+  const {userDetails, setUserDetails} = useContext(userContext)
+  
 
   const [user, setUser] = useState({
     email: "",
@@ -14,11 +27,25 @@ const Login = () => {
     e.preventDefault()
 
     try {
-      await account.createEmailSession(user.email, user.password)
-      navigate("/")
+       await account.createEmailSession(user.email, user.password)
+      const acc =  await account.get()
+      console.log(acc)
+      if(acc){
+        setUserDetails(acc)
+      }
+      
     } catch (error) {
       console.log(error)
     }
+   
+  }
+  useEffect(() => {
+    console.log( userDetails)
+  }, [userDetails])
+  
+
+  if(userDetails){
+    navigate("/")
   }
 
   return (
