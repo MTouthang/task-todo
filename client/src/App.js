@@ -10,22 +10,26 @@ import Home from "./pages/Home";
 
 //  context api
 import userContext from "./contextAPI/userContext";
+import dataContext from "./contextAPI/dataContext";
 
 function App() {
   const [userDetails, setUserDetails] = useState(null);
+  const [dataContextValue, setDataContextValue] = useState(null);
 
   return (
     <>
       <userContext.Provider value={{ userDetails, setUserDetails }}>
-        <Router>
-          <NavBar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/login" element={<Login />} />
-          </Routes>
-          <Footer />
-        </Router>
+        <dataContext.Provider value={{ dataContextValue, setDataContextValue }}>
+          <Router>
+            <NavBar />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/login" element={<Login />} />
+            </Routes>
+            <Footer />
+          </Router>
+        </dataContext.Provider>
       </userContext.Provider>
     </>
   );
