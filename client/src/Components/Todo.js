@@ -9,21 +9,77 @@ const Todo = () => {
 
   const [userData, setUserData] = useState([]);
   const { userDetails } = useContext(userContext);
+  const [search, setSearch] = useState();
+  const [searchData, setSearchData] = useState([]);
 
   const fetchUserData = async (userId) => {
     try {
       const data = await axios.get(`tasks/${userId}`);
       console.log(data.data.tasks);
+
       setUserData(data.data.tasks);
     } catch (error) {
       console.log(error);
     }
   };
 
+  // refresh with respect to the wen the data change
   useEffect(() => {
     fetchUserData(userDetails.$id);
   }, [userDetails, dataContextValue]);
 
+  // handle edit button for task name update
+  //TODO: handle for todo too
+  const handleEdit = async (item) => {
+    console.log(item._id);
+    try {
+      const taskTitle = prompt("Enter the new Title");
+
+      if (!taskTitle) {
+        console.log("Please enter the task title!");
+      } else {
+        const res = await axios.put(`task/${item._id}`, {
+          taskName: taskTitle,
+        });
+
+        if (res) {
+          fetchUserData(userDetails.$id);
+        }
+      }
+    } catch (error) {
+      console.log(`Edit handle Error: ${error}`);
+    }
+  };
+
+  /** handling delete */
+  const handleDelete = async (item) => {
+    try {
+      const res = await axios.delete(`task/${item._id}`);
+      console.log(res.data.success);
+      if (res.data.success) {
+        console.log(res);
+        fetchUserData(userDetails.$id);
+      }
+    } catch (error) {
+      console.log(`error - ${error}`);
+    }
+  };
+
+  /** handle search query --- */
+
+  const handleSearch = async () => {
+    try {
+      const res = await axios.get(
+        `tasks/search/${userDetails.$id}?search=${search}`
+      );
+      if (res.data.success) {
+        setSearchData(res);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  console.log(search);
   return (
     <section className="text-gray-600 body-fon">
       <div className="container px-5  mx-auto">
@@ -33,7 +89,8 @@ const Todo = () => {
             <button
               type="submit"
               title="Search"
-              className="p-1 focus:outline-none focus:ring"
+              className="p-1 focus:outline-none focus:ring "
+              onClick={handleSearch}
             >
               <svg
                 fill="currentColor"
@@ -48,7 +105,9 @@ const Todo = () => {
             type="search"
             name="Search"
             placeholder="Search..."
+            value={search}
             className="w-full py-3 pl-12 text-sm rounded-full sm:w-96 focus:outline-none bg-indigo-500 text-white focus:dark:bg-indigo-700"
+            onChange={(e) => setSearch(e.target.value)}
           />
         </div>
 
@@ -77,10 +136,16 @@ const Todo = () => {
               <h1 className="flex-grow sm:pr-16 text-xl font-medium title-font text-gray-900">
                 {item.taskName}
               </h1>
-              <button className="flex-shrink-0 text-white bg-indigo-500 border-0  px-5  focus:outline-none hover:bg-indigo-600 rounded text-lg mt-10 m:2 sm:mt-0 mx-2 ">
+              <button
+                className="flex-shrink-0 text-white bg-indigo-500 border-0  px-5  focus:outline-none hover:bg-indigo-600 rounded text-lg mt-10 m:2 sm:mt-0 mx-2 "
+                onClick={() => handleEdit(item)}
+              >
                 Edit
               </button>
-              <button className="flex-shrink-0 text-white bg-indigo-500 border-0  px-5 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-10 sm:mt-0 mx-2 ">
+              <button
+                className="flex-shrink-0 text-white bg-indigo-500 border-0  px-5 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-10 sm:mt-0 mx-2 "
+                onClick={() => handleDelete(item)}
+              >
                 delete
               </button>
             </div>
