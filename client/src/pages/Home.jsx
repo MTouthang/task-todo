@@ -10,14 +10,14 @@ const Home = () => {
 
   const {userDetails} = useContext(userContext)
 
-  console.log({userDetails})
+
 
 
   if(!userDetails){
     return <Navigate replace to="/signup"/>
   }
 
-  console.log(userDetails.$id)
+ 
 
   return (
     <div>
