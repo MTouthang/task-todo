@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useContext, useState } from "react";
 import dataContext from "../contextAPI/dataContext";
 import userContext from "../contextAPI/userContext";
+import api_base from "../config/api";
 
 const TodoForm = () => {
   /** dataContext for storing tasks -  */
@@ -21,7 +22,7 @@ const TodoForm = () => {
 
   const submitData = async () => {
     try {
-      const res = await axios.post("task/create", data);
+      const res = await axios.post(`${api_base}/task/create`, data);
 
       if (res) {
         console.log("Task posted! ");

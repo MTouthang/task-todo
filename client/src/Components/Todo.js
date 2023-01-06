@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useState, useEffect, useContext } from "react";
 import dataContext from "../contextAPI/dataContext";
 import userContext from "../contextAPI/userContext";
+import api_base from "../config/api";
 
 const Todo = () => {
   /** dataContext for storing tasks -  */
@@ -18,7 +19,7 @@ const Todo = () => {
 
   const fetchUserData = async (userId) => {
     try {
-      const data = await axios.get(`tasks/${userId}`);
+      const data = await axios.get(`${api_base}/tasks/${userId}`);
 
       setUserData(data.data.tasks);
     } catch (error) {
@@ -41,7 +42,7 @@ const Todo = () => {
       if (!taskTitle) {
         console.log("Please enter the task title!");
       } else {
-        const res = await axios.put(`task/${item._id}`, {
+        const res = await axios.put(`${api_base}/task/${item._id}`, {
           taskName: taskTitle,
         });
 
@@ -58,7 +59,7 @@ const Todo = () => {
   /** handling delete */
   const handleDelete = async (item) => {
     try {
-      const res = await axios.delete(`task/${item._id}`);
+      const res = await axios.delete(`${api_base}/task/${item._id}`);
 
       if (res.data.success) {
         fetchUserData(userDetails.$id);
@@ -73,7 +74,7 @@ const Todo = () => {
   const handleSearch = async () => {
     try {
       const res = await axios.get(
-        `tasks/search/${userDetails.$id}?search=${search}`
+        `${api_base}/tasks/search/${userDetails.$id}?search=${search}`
       );
 
       if (res.data.success) {
