@@ -96,6 +96,7 @@ const Todo = () => {
   /** handling to order recently added thing */
   const handleRecentlyAdded = () => {
     setReverseData(userData.reverse());
+    console.log(reverseData);
   };
   const handleNormalOrder = () => {
     fetchUserData(userDetails.$id);

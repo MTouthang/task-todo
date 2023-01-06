@@ -31,6 +31,7 @@ const TodoForm = () => {
     } catch (error) {
       console.log(error);
     }
+    console.log(dataContextValue);
   };
 
   const todoFormSubmit = async (e) => {
