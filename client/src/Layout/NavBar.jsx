@@ -26,13 +26,13 @@ const NavBar = () => {
     }
    
   }
-  console.log(userDetails)
+  
 
   return (
     <header className="text-gray-900 body-font">
         <div className=" mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center justify-between bg-gray-100">
             <a  className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0" 
-            href='facebook.com'>
+            href='/'>
             
               <span className="ml-3 text-xl">Task-Todo</span>
             </a>

@@ -32,7 +32,7 @@ const Signup = () => {
     
     promise.then(
       function(response) {
-      console.log(response)
+      
       // navigate to Login
       // setUserDetails(user)
       if(response){

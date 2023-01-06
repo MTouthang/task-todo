@@ -7,15 +7,18 @@ const Todo = () => {
   /** dataContext for storing tasks -  */
   const { dataContextValue } = useContext(dataContext);
 
-  const [userData, setUserData] = useState([]);
   const { userDetails } = useContext(userContext);
+
+  const [userData, setUserData] = useState([]);
   const [search, setSearch] = useState();
+  const [toggle, setToggle] = useState(false);
   const [searchData, setSearchData] = useState([]);
+  const [reverseData, setReverseData] = useState([]);
+  const [hide, setHide] = useState(true);
 
   const fetchUserData = async (userId) => {
     try {
       const data = await axios.get(`tasks/${userId}`);
-      console.log(data.data.tasks);
 
       setUserData(data.data.tasks);
     } catch (error) {
@@ -29,11 +32,11 @@ const Todo = () => {
   }, [userDetails, dataContextValue]);
 
   // handle edit button for task name update
-  //TODO: handle for todo too
+  //TODO: handle edit for todo too and cross mark the Todo
+
   const handleEdit = async (item) => {
-    console.log(item._id);
     try {
-      const taskTitle = prompt("Enter the new Title");
+      const taskTitle = prompt("Enter the new Title", `${item.taskName}`);
 
       if (!taskTitle) {
         console.log("Please enter the task title!");
@@ -49,46 +52,67 @@ const Todo = () => {
     } catch (error) {
       console.log(`Edit handle Error: ${error}`);
     }
+    handleSearch();
   };
 
   /** handling delete */
   const handleDelete = async (item) => {
     try {
       const res = await axios.delete(`task/${item._id}`);
-      console.log(res.data.success);
+
       if (res.data.success) {
-        console.log(res);
         fetchUserData(userDetails.$id);
       }
     } catch (error) {
       console.log(`error - ${error}`);
     }
+    handleSearch();
   };
 
   /** handle search query --- */
-
   const handleSearch = async () => {
     try {
       const res = await axios.get(
         `tasks/search/${userDetails.$id}?search=${search}`
       );
+
       if (res.data.success) {
-        setSearchData(res);
+        const data = res.data.taskResult;
+        setSearchData(data);
       }
     } catch (error) {
       console.log(error);
     }
+
+    if (searchData) {
+      setToggle(true);
+    }
+    if (search === "") {
+      setToggle(false);
+    }
   };
-  console.log(search);
+
+  /** handling to order recently added thing */
+  const handleRecentlyAdded = () => {
+    setReverseData(userData.reverse());
+  };
+  const handleNormalOrder = () => {
+    fetchUserData(userDetails.$id);
+  };
+
+  // TODO: handle todo view fo only one particular task
+  const showTodo = () => {
+    hide ? setHide(false) : setHide(true);
+  };
+
   return (
     <section className="text-gray-600 body-fon">
       <div className="container px-5  mx-auto">
         {/*****  search field ******/}
-        <div className="relative mt-1 lg:w-1/3 mx-auto">
+        <div className="relative mt-1 w-96 mx-auto">
           <span className="absolute inset-y-0 flex items-center pl-2 mx-auto">
             <button
               type="submit"
-              title="Search"
               className="p-1 focus:outline-none focus:ring "
               onClick={handleSearch}
             >
@@ -110,18 +134,54 @@ const Todo = () => {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
+        {toggle ? (
+          searchData.map((item, index) => {
+            return (
+              <div
+                key={index}
+                className="lg:w-2/3 flex flex-col sm:flex-row sm:items-center items-start mx-auto border-2 border-gray-200 rounded-md px-3 my-1 py-1"
+              >
+                <h1 className="flex-grow sm:pr-16 text-xl font-medium title-font text-gray-900">
+                  {item.taskName}
+                </h1>
+                <button
+                  className="flex-shrink-0 text-white bg-indigo-500 border-0  px-5  focus:outline-none hover:bg-indigo-600 rounded text-lg mt-10 m:2 sm:mt-0 mx-2 "
+                  onClick={() => handleEdit(item)}
+                >
+                  Edit
+                </button>
+                <button
+                  className="flex-shrink-0 text-white bg-indigo-500 border-0  px-5 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-10 sm:mt-0 mx-2 "
+                  onClick={() => handleDelete(item)}
+                >
+                  delete
+                </button>
+              </div>
+            );
+          })
+        ) : (
+          <h1 className="flex-grow sm:pr-16 text-sm font-medium title-font text-gray-400 text-center py-2">
+            Search item not found
+          </h1>
+        )}
 
         {/* sort order */}
         <div className="w-80 mx-auto">
           <label
-            for="Toggle3"
+            htmlFor="Toggle3"
             className="inline-flex pl-5 items-center p-1 rounded-md cursor-pointer dark:text-gray-800"
           >
             <input id="Toggle3" type="checkbox" className="hidden peer" />
-            <span className="px-4 rounded-l-md dark:bg-indigo-400 peer-checked:dark:bg-gray-300">
+            <span
+              className="px-4 rounded-l-md dark:bg-indigo-400 peer-checked:dark:bg-gray-300"
+              onClick={handleNormalOrder}
+            >
               Normal Order
             </span>
-            <span className="px-4  rounded-r-md dark:bg-gray-300 peer-checked:dark:bg-indigo-400">
+            <span
+              className="px-4  rounded-r-md dark:bg-gray-300 peer-checked:dark:bg-indigo-400"
+              onClick={handleRecentlyAdded}
+            >
               Recently Added
             </span>
           </label>
@@ -129,26 +189,38 @@ const Todo = () => {
 
         {userData.map((item, index) => {
           return (
-            <div
-              key={index}
-              className="lg:w-2/3 flex flex-col sm:flex-row sm:items-center items-start mx-auto border-2 border-gray-200 rounded-md px-3 my-1 py-1"
-            >
-              <h1 className="flex-grow sm:pr-16 text-xl font-medium title-font text-gray-900">
-                {item.taskName}
-              </h1>
-              <button
-                className="flex-shrink-0 text-white bg-indigo-500 border-0  px-5  focus:outline-none hover:bg-indigo-600 rounded text-lg mt-10 m:2 sm:mt-0 mx-2 "
-                onClick={() => handleEdit(item)}
+            <>
+              <div
+                key={index}
+                className="lg:w-2/3 flex flex-col sm:flex-row sm:items-center items-start mx-auto border-2 border-gray-200 rounded-md px-3 mt-2 py-1"
+                onClick={showTodo}
               >
-                Edit
-              </button>
-              <button
-                className="flex-shrink-0 text-white bg-indigo-500 border-0  px-5 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-10 sm:mt-0 mx-2 "
-                onClick={() => handleDelete(item)}
-              >
-                delete
-              </button>
-            </div>
+                <h1 className="flex-grow sm:pr-16 text-xl font-medium title-font text-gray-900">
+                  {item.taskName}
+                </h1>
+                <button
+                  className="flex-shrink-0 text-white bg-indigo-500 border-0  px-5  focus:outline-none hover:bg-indigo-600 rounded text-lg mt-10 m:2 sm:mt-0 mx-2 "
+                  onClick={() => handleEdit(item)}
+                >
+                  Edit
+                </button>
+                <button
+                  className="flex-shrink-0 text-white bg-indigo-500 border-0  px-5 focus:outline-none hover:bg-indigo-600 rounded text-lg mt-10 sm:mt-0 mx-2 "
+                  onClick={() => handleDelete(item)}
+                >
+                  delete
+                </button>
+              </div>
+              {hide ? (
+                ""
+              ) : (
+                <div className="border-1 w-2/3 mx-auto border rounded-xl px-4">
+                  {item.todos.map((todo, index) => {
+                    return <li key={index}>{todo.todo}</li>;
+                  })}
+                </div>
+              )}
+            </>
           );
         })}
       </div>

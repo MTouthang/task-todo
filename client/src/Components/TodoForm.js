@@ -22,7 +22,7 @@ const TodoForm = () => {
   const submitData = async () => {
     try {
       const res = await axios.post("task/create", data);
-      console.log(res);
+
       if (res) {
         console.log("Task posted! ");
         setDataContextValue(res.data.task);
@@ -30,7 +30,6 @@ const TodoForm = () => {
     } catch (error) {
       console.log(error);
     }
-    console.log(dataContextValue);
   };
 
   const todoFormSubmit = async (e) => {
@@ -85,8 +84,6 @@ const TodoForm = () => {
             </button>
           </div>
         </div>
-
-        
       </div>
     </section>
   );

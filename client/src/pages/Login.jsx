@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useContext, useState } from 'react'
 
 /** appwrite for user account*/
 import account from '../config/appwrite'
@@ -29,7 +29,7 @@ const Login = () => {
     try {
        await account.createEmailSession(user.email, user.password)
       const acc =  await account.get()
-      console.log(acc)
+      
       if(acc){
         setUserDetails(acc)
       }
@@ -39,9 +39,7 @@ const Login = () => {
     }
    
   }
-  useEffect(() => {
-    console.log( userDetails)
-  }, [userDetails])
+  
   
 
   if(userDetails){
