@@ -4,6 +4,12 @@ Full fledge Task-todo web application
 
 ![Build with -](https://img.shields.io/badge/Build%20with-mern%20stack-brightgreen) ![Time taken](https://img.shields.io/badge/Time%20Taken-01%20week-blue) [![Project author](https://img.shields.io/badge/Author-Ngamlenmang%20Touthang-9cf)](https://github.com/MTouthang/ "MTouthang")
 
+### Features
+- signup and login of a person
+- add Task with multiple todo
+- update and delete Task
+- search Task
+- sort task
 
 ### Things Learn from the project
 - More about React   
